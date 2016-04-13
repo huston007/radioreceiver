@@ -41,6 +41,7 @@ function RadioController() {
   };
 
   var decoder = new Worker('decode-worker.js');
+  var fftWorker = new Worker('./fft/fft-worker.js');
   var player = new Player();
   var state = new State(STATE.OFF);
   var requestingBlocks = 0;
@@ -423,10 +424,14 @@ function RadioController() {
   function statePlaying() {
     ++requestingBlocks;
     tuner.readSamples(SAMPLES_PER_BUF, function(data) {
+      var fftBuffer = data.slice(0, 4096 * 4);
+      fftWorker.postMessage({buffer: fftBuffer});
+
       --requestingBlocks;
       if (state.state == STATE.PLAYING) {
         if (playingBlocks <= 2) {
           ++playingBlocks;
+
           decoder.postMessage(
               [0, data, stereoEnabled, actualFrequency - frequency], [data]);
         }
@@ -586,6 +591,12 @@ function RadioController() {
   }
 
   decoder.addEventListener('message', receiveDemodulated);
+  
+  function receiveProcessedFFT(e) {
+    ui.drawFFT(e.data);
+  }
+  
+  fftWorker.addEventListener('message', receiveProcessedFFT);
 
   /**
    * Starts or stops calculating an estimated frequency correction.

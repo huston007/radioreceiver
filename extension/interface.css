@@ -457,5 +457,10 @@ option {
 
 .graphics {
   width: 100%;
-  height: 400px;
+  height: 350px;
+}
+
+.fftCanvas {
+  width: 100%;
+  height: 100%;
 }

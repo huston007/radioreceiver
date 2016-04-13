@@ -3,3 +3,4 @@
 *.zip
 nacl-src/pnacl
 .idea
+node_modules

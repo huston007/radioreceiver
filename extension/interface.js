@@ -34,6 +34,8 @@ function Interface(fmRadio) {
    */
   var currentBand = Bands['WW']['FM'];
 
+  var canvasCtx = null;
+
   /**
    * Updates the UI.
    */
@@ -107,6 +109,37 @@ function Interface(fmRadio) {
     setVisible(stopButton, fmRadio.isRecording());
 
     selectCurrentPreset();
+  }
+
+
+  function drawFFT(data) {
+    var bufferLength = data.length / 2;
+    var WIDTH = canvasCtx.canvas.width;
+    var HEIGHT = canvasCtx.canvas.height;
+    var sliceWidth = WIDTH / bufferLength;
+
+    canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    canvasCtx.strokeStyle = 'white';
+
+    canvasCtx.beginPath();
+    var x = 0;
+
+    for(var i = 0; i < bufferLength; i++) {
+      var v = Math.abs(data[i]);
+      var y = v * HEIGHT/50;
+      y = HEIGHT - y;
+
+      if(i === 0) {
+        canvasCtx.moveTo(x, y);
+      } else {
+        canvasCtx.lineTo(x, y);
+      }
+
+      x += sliceWidth;
+    }
+
+    canvasCtx.stroke();
   }
 
   /**
@@ -881,6 +914,10 @@ function Interface(fmRadio) {
    * Attaches all the event handlers, loads the presets, and updates the UI.
    */
   function attach() {
+    canvasCtx = document.getElementById('fftCanvas').getContext('2d');
+
+    canvasCtx.canvas.width  = canvasCtx.canvas.clientWidth;
+    canvasCtx.canvas.height = canvasCtx.canvas.clientHeight;
     powerOnButton.addEventListener('click', powerOn);
     powerOffButton.addEventListener('click', powerOff);
     settingsButton.addEventListener('click', showSettings);
@@ -928,7 +965,8 @@ function Interface(fmRadio) {
 
   return {
     attach: attach,
-    update: update
+    update: update,
+    drawFFT: drawFFT
   };
 }
 
