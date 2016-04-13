@@ -125,10 +125,12 @@ function Interface(fmRadio) {
     canvasCtx.beginPath();
     var x = 0;
 
+    var max = Math.max.apply(null, data);
+    var multiplexer = HEIGHT / max * 0.8;
+
     for(var i = 0; i < bufferLength; i++) {
       var v = Math.abs(data[i]);
-      var y = v * HEIGHT/50;
-      y = HEIGHT - y;
+      var y = HEIGHT - v * multiplexer;
 
       if(i === 0) {
         canvasCtx.moveTo(x, y);
