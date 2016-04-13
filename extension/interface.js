@@ -936,7 +936,6 @@ var radio = new RadioController();
 var interface = new Interface(radio);
 
 window.addEventListener('load', function() {
-  AuxWindows.resizeCurrentTo(500, 225);
   interface.attach();
 });
 

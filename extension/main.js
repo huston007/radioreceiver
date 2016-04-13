@@ -18,10 +18,10 @@ chrome.app.runtime.onLaunched.addListener(function() {
   chrome.app.window.create('interface.html', {
     'id': 'radioTuner',
     'bounds': {
-      'width': 500,
-      'height': 225
+      'width': 600,
+      'height': 625
     },
-    'resizable': false,
+    'resizable': true,
     'frame': 'none'
   });
 });
